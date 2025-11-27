@@ -3,6 +3,8 @@ package hu.attila.filmajanlo.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+
+
 @Data
 @Entity
 public class Movie {
@@ -25,4 +27,9 @@ public class Movie {
     private String description;
 
     private String imageUrl;
+
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
