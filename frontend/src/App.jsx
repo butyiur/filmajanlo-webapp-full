@@ -1,40 +1,21 @@
-import { useEffect, useState } from "react";
-import api from "./api/client";
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar.jsx";
+import MovieList from "./pages/MovieList.jsx";
+import MovieForm from "./pages/MovieForm.jsx";
+import CategoryList from "./pages/CategoryList.jsx";
+import Login from "./pages/Login.jsx"; // ⬅
 
-function App() {
-    const [movies, setMovies] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-
-    useEffect(() => {
-        api
-            .get("/movies")
-            .then((res) => {
-                setMovies(res.data);
-                setLoading(false);
-            })
-            .catch(() => {
-                setError("Hiba történt a filmek betöltésekor");
-                setLoading(false);
-            });
-    }, []);
-
-    if (loading) return <div style={{ padding: 20 }}>Betöltés...</div>;
-    if (error) return <div style={{ padding: 20, color: "red" }}>{error}</div>;
-
+export default function App() {
     return (
-        <div style={{ padding: 20 }}>
-            <h1>Filmajánló</h1>
-            <ul>
-                {movies.map((movie) => (
-                    <li key={movie.id}>
-                        <strong>{movie.title}</strong> ({movie.releaseYear}) –{" "}
-                        {movie.category?.name}
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <>
+            <Navbar />
+            <Routes>
+                <Route path="/" element={<MovieList />} />
+                <Route path="/movies/new" element={<MovieForm />} />
+                <Route path="/movies/:id/edit" element={<MovieForm />} />
+                <Route path="/categories" element={<CategoryList />} />
+                <Route path="/login" element={<Login />} /> {/* ⬅ */}
+            </Routes>
+        </>
     );
 }
-
-export default App;
