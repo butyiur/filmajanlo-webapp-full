@@ -3,6 +3,9 @@ package hu.attila.filmajanlo.controller;
 import hu.attila.filmajanlo.model.Movie;
 import hu.attila.filmajanlo.service.MovieService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 import java.util.List;
 
@@ -32,14 +35,15 @@ public class MovieController {
     // SEARCH by title
     // SEARCH /api/movies/search?title=&director=&categoryId=&yearFrom=&yearTo=
     @GetMapping("/search")
-    public List<Movie> searchMovies(
+    public Page<Movie> searchMovies(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String director,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Integer yearFrom,
-            @RequestParam(required = false) Integer yearTo
+            @RequestParam(required = false) Integer yearTo,
+            @PageableDefault(size = 10, sort = "releaseYear") Pageable pageable
     ) {
-        return movieService.search(title, director, categoryId, yearFrom, yearTo);
+        return movieService.search(title, director, categoryId, yearFrom, yearTo, pageable);
     }
 
     // FILTER by category

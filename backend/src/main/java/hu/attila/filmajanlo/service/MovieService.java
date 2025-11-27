@@ -2,6 +2,8 @@ package hu.attila.filmajanlo.service;
 
 import hu.attila.filmajanlo.model.Movie;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface MovieService {
 
@@ -15,6 +17,5 @@ public interface MovieService {
     List<Movie> searchByTitle(String title);
     List<Movie> findByCategory(Long categoryId);
 
-    // ÚJ: rugalmas kereső – minden paraméter opcionális
-    List<Movie> search(String title, String director, Long categoryId, Integer yearFrom, Integer yearTo);
+    Page<Movie> search(String title, String director, Long categoryId, Integer yearFrom, Integer yearTo, Pageable pageable);
 }

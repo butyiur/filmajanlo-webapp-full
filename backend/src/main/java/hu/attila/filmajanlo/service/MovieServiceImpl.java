@@ -3,6 +3,8 @@ package hu.attila.filmajanlo.service;
 import hu.attila.filmajanlo.model.Movie;
 import hu.attila.filmajanlo.repository.MovieRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -63,12 +65,12 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<Movie> search(String title, String director, Long categoryId, Integer yearFrom, Integer yearTo) {
+    public Page<Movie> search(String title, String director, Long categoryId, Integer yearFrom, Integer yearTo, Pageable pageable) {
         String t  = (title != null && !title.isBlank()) ? title : null;
         String d  = (director != null && !director.isBlank()) ? director : null;
         Long c    = (categoryId != null && categoryId > 0) ? categoryId : null;
         Integer yf = (yearFrom != null) ? yearFrom : null;
         Integer yt = (yearTo   != null) ? yearTo   : null;
-        return movieRepository.search(t, d, c, yf, yt);
+        return movieRepository.searchPaged(t, d, c, yf, yt, pageable);
     }
 }
