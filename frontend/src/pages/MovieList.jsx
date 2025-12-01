@@ -179,20 +179,18 @@ export default function MovieList() {
                         <Card elevation={2} sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
 
                             {/* ---- Kép ---- */}
-                            {m.imageUrl ? (
-                                <CardMedia
-                                    component="img"
-                                    height="220"
-                                    image={m.imageUrl}
-                                    alt={m.title}
-                                    loading="lazy"
-                                    crossOrigin="anonymous"
-                                    referrerPolicy="no-referrer"
-                                    onError={(e) => {
-                                        e.currentTarget.onerror = null;
-                                        e.currentTarget.src = FALLBACK_IMG;
-                                    }}
-                                />
+                             {m.posterUrl ? (
+                                    <CardMedia
+                                        component="img"
+                                        height="220"
+                                        image={m.posterUrl}
+                                        alt={m.title}
+                                        loading="lazy"
+                                        onError={(e) => {
+                                            e.currentTarget.onerror = null;
+                                            e.currentTarget.src = FALLBACK_IMG;
+                        }}
+                            />
                             ) : (
                                 <CardMedia
                                     component="img"

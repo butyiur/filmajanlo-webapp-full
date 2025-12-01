@@ -20,7 +20,7 @@ export default function MovieForm() {
         genre: "",
         rating: 7.0,
         description: "",
-        imageUrl: "",
+        posterUrl: "",
         categoryId: ""
     });
     const [error, setError] = useState("");
@@ -37,7 +37,7 @@ export default function MovieForm() {
                     genre: m.genre ?? "",
                     rating: m.rating ?? 7.0,
                     description: m.description ?? "",
-                    imageUrl: m.imageUrl ?? "",
+                    posterUrl: m.posterUrl ?? "",
                     categoryId: m.category?.id ?? ""
                 });
             });
@@ -51,7 +51,7 @@ export default function MovieForm() {
         setError("");
 
         // Alap URL validáció (ha meg van adva, http/https-sel kezdődjön)
-        if (form.imageUrl && !/^https?:\/\//i.test(form.imageUrl)) {
+        if (form.posterUrl && !/^https?:\/\//i.test(form.posterUrl)) {
             setError("A plakát URL-nek http:// vagy https:// kezdetűnek kell lennie.");
             return;
         }
@@ -63,7 +63,7 @@ export default function MovieForm() {
             genre: form.genre,
             rating: Number(form.rating),
             description: form.description,
-            imageUrl: form.imageUrl,
+            posterUrl: form.posterUrl,
             category: form.categoryId ? { id: Number(form.categoryId) } : null
         };
 
@@ -137,14 +137,14 @@ export default function MovieForm() {
                         <TextField
                             label="Plakát URL (http/https)"
                             type="url"
-                            value={form.imageUrl}
-                            onChange={e => change("imageUrl", e.target.value)}
+                            value={form.posterUrl}
+                            onChange={e => change("posterUrl", e.target.value)}
                             helperText="Illeszthetsz be külső képlinket (pl. TMDB/IMDb/Imgur/Cloudinary)."
                         />
 
-                        {form.imageUrl && (
+                        {form.posterUrl && (
                             <img
-                                src={form.imageUrl}
+                                src={form.posterUrl}
                                 alt="Előnézet"
                                 onError={(e) => { e.currentTarget.style.display = "none"; }}
                                 style={{ width: "100%", maxHeight: 260, objectFit: "cover", borderRadius: 8 }}

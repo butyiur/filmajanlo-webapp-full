@@ -26,7 +26,7 @@ public class Movie {
     @Column(length = 2000)
     private String description;
 
-    private String imageUrl;
+    private String posterUrl;
 
 
     @ManyToOne
