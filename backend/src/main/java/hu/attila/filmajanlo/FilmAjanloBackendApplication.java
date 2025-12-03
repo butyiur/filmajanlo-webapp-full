@@ -12,6 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;  // 🔥 IMPORT KELL!
+
 @SpringBootApplication
 public class FilmAjanloBackendApplication {
 
@@ -19,40 +21,46 @@ public class FilmAjanloBackendApplication {
 		SpringApplication.run(FilmAjanloBackendApplication.class, args);
 	}
 
-	// csak placeholder, ha később töltenél be filmeket/kategóriákat
 	@Bean
 	public CommandLineRunner dataLoader(MovieRepository movieRepo, CategoryRepository categoryRepo) {
 		return args -> {
-			// ide később alap filmeket vagy kategóriákat tehetünk
+			// ide tehetsz később alap filmeket vagy kategóriákat
 		};
 	}
 
 	@Bean
 	CommandLineRunner initDefaultUsers(UserRepository userRepository, PasswordEncoder encoder) {
 		return args -> {
-			// ADMIN létrehozása, ha nem létezik
-			if (userRepository.findByUsername("admin").isEmpty()) {
-				User admin = new User();
-				admin.setUsername("admin");
-				admin.setPasswordHash(encoder.encode("admin123"));
-				admin.setRole("ADMIN");
-				userRepository.save(admin);
-				System.out.println("✅ Alap admin létrehozva: admin / admin123");
-			} else {
-				System.out.println("ℹ️ Admin user már létezik, nem hozom létre újra.");
-			}
 
-			// TESZTUSER létrehozása, ha nem létezik
-			if (userRepository.findByUsername("tesztuser").isEmpty()) {
-				User user = new User();
-				user.setUsername("tesztuser");
-				user.setPasswordHash(encoder.encode("teszt123"));
-				user.setRole("USER");
-				userRepository.save(user);
-				System.out.println("✅ Tesztuser létrehozva (tesztuser / teszt123)");
-			} else {
-				System.out.println("ℹ️ Tesztuser már létezik, nem hozom létre újra.");
-			}
+			// ADMIN létrehozása
+			userRepository.findByUsername("admin").ifPresentOrElse(
+					u -> System.out.println("ℹ️ Admin már létezik."),
+					() -> {
+						User a = new User();
+						a.setUsername("admin");
+						a.setPasswordHash(encoder.encode("admin123"));
+						a.setRole("ADMIN");
+						a.setCreatedAt(LocalDateTime.now());
+						a.setLastLogin(null);
+						userRepository.save(a);
+						System.out.println("✅ Admin létrehozva: admin / admin123");
+					}
+			);
+
+			// TESZTUSER létrehozása
+			userRepository.findByUsername("tesztuser").ifPresentOrElse(
+					u -> System.out.println("ℹ️ Tesztuser már létezik."),
+					() -> {
+						User u = new User();
+						u.setUsername("tesztuser");
+						u.setPasswordHash(encoder.encode("teszt123"));
+						u.setRole("USER");
+						u.setCreatedAt(LocalDateTime.now());
+						u.setLastLogin(null);
+						userRepository.save(u);
+						System.out.println("✅ Tesztuser létrehozva: tesztuser / teszt123");
+					}
+			);
 		};
 	}
 }

@@ -37,14 +37,24 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+
+                        // ➕ Admin users endpointok
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // Movies
                         .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/movies/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/movies/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/movies/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("ADMIN")
+
+                        // Categories
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("ADMIN")
                         .requestMatchers("/api/categories/**").hasRole("ADMIN")
+
+                        // User movie list
                         .requestMatchers("/api/user/movies/**").authenticated()
+
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntryPoint))

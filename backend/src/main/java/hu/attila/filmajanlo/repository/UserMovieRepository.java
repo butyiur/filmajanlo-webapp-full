@@ -9,6 +9,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface UserMovieRepository extends JpaRepository<UserMovie, Long> {
+
     @Query("SELECT DISTINCT m FROM UserMovie m WHERE m.owner = :owner")
     List<UserMovie> findByOwner(@Param("owner") User owner);
+
+    // 🔥 Felhasználó összes UserMovie rekordjának törlése
+    void deleteByOwnerId(Long id);
 }

@@ -47,8 +47,7 @@ export default function Navbar() {
                         Kategóriák
                     </Link>
 
-                    {/* Saját lista: csak sima USER + ADMIN ha akarod.
-                        Most a kérésed szerint: CSAK USER-nek. */}
+                    {/* Saját lista: csak USER-nek */}
                     {loggedIn && !isAdmin && (
                         <Link
                             component={RouterLink}
@@ -60,8 +59,17 @@ export default function Navbar() {
                         </Link>
                     )}
 
-                    {/* Regisztráció külön menüpontot NEM raktunk,
-                        majd a Login oldalon lesz link. */}
+                    {/* ADMIN - Felhasználók menüpont */}
+                    {isAdmin && (
+                        <Link
+                            component={RouterLink}
+                            to="/admin/users"
+                            color="inherit"
+                            underline="hover"
+                        >
+                            Felhasználók
+                        </Link>
+                    )}
                 </Stack>
 
                 <Box sx={{ flexGrow: 0 }} />
