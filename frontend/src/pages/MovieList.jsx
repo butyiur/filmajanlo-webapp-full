@@ -1,26 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api, { auth } from "../api/client";
-import {
-    Box,
-    Grid,
-    Card,
-    CardContent,
-    CardMedia,
-    CardActions,
-    Typography,
-    TextField,
-    Select,
-    MenuItem,
-    Button,
-    Stack,
-    InputLabel,
-    FormControl,
-    Pagination,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 
 export default function MovieList() {
     const navigate = useNavigate();
@@ -39,25 +19,24 @@ export default function MovieList() {
     const [yearTo, setYearTo] = useState("");
 
     const [page, setPage] = useState(1);
-    const [pageSize] = useState(12);
+    const [pageSize, setPageSize] = useState(12);
     const [totalPages, setTotalPages] = useState(1);
 
-    // --- ha az URL-ben van pl. ?categoryId=3, akkor kinyerjük ---
     const params = new URLSearchParams(location.search);
     const categoryFilterFromUrl = params.get("categoryId");
 
-    // --- Filmek betöltése ---
+    // --------------------------------------------------------------------
+    // ADATOK BETÖLTÉSE
+    // --------------------------------------------------------------------
     const loadMovies = async () => {
         try {
             let res;
 
             if (categoryFilterFromUrl) {
-                // kategória alapján szűrés
                 res = await api.get(`/movies/category/${categoryFilterFromUrl}`);
                 setMovies(res.data);
                 setTotalPages(1);
             } else {
-                // normál keresés
                 res = await api.get("/movies/search", {
                     params: {
                         title: search || null,
@@ -69,6 +48,7 @@ export default function MovieList() {
                         size: pageSize,
                     },
                 });
+
                 setMovies(res.data.content);
                 setTotalPages(res.data.totalPages || 1);
             }
@@ -77,26 +57,30 @@ export default function MovieList() {
         }
     };
 
-    // --- Kategóriák betöltése ---
     const loadCategories = async () => {
         try {
             const res = await api.get("/categories");
             setCategories(res.data);
-        } catch (err) {
-            console.error("❌ Kategóriák betöltése sikertelen:", err);
+        } catch {
+            console.error("❌ Kategóriák betöltése sikertelen");
         }
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            await Promise.all([loadMovies(), loadCategories()]);
-        };
-        fetchData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page, search, director, categoryId, yearFrom, yearTo, categoryFilterFromUrl]);
+        loadCategories();
+    }, []);
 
+    useEffect(() => {
+        loadMovies();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page, pageSize, search, director, categoryId, yearFrom, yearTo, categoryFilterFromUrl]);
+
+    // --------------------------------------------------------------------
+    // TÖRLÉS
+    // --------------------------------------------------------------------
     const handleDelete = async (id) => {
         if (!window.confirm("Biztosan törlöd ezt a filmet?")) return;
+
         try {
             await api.delete(`/movies/${id}`);
             loadMovies();
@@ -105,110 +89,160 @@ export default function MovieList() {
         }
     };
 
+    // --------------------------------------------------------------------
+    // RENDER
+    // --------------------------------------------------------------------
     return (
-        <Box sx={{ p: 3 }}>
-            {/* SZŰRŐK + ADMIN ÚJ FILM GOMB */}
+        <div className="page page-movie-list">
+
+            {/* ---------------- SZŰRŐK ---------------- */}
             {!categoryFilterFromUrl && (
-                <Stack
-                    direction="row"
-                    spacing={2}
-                    sx={{ mb: 3, flexWrap: "wrap" }}
-                    alignItems="center"
-                >
-                    <TextField label="Cím" value={search} onChange={(e) => setSearch(e.target.value)} />
-                    <TextField label="Rendező" value={director} onChange={(e) => setDirector(e.target.value)} />
-                    <FormControl sx={{ minWidth: 160 }}>
-                        <InputLabel>Kategória</InputLabel>
-                        <Select
-                            value={categoryId}
-                            label="Kategória"
-                            onChange={(e) => setCategoryId(e.target.value)}
-                        >
-                            <MenuItem value="">(összes)</MenuItem>
-                            {categories.map((c) => (
-                                <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <TextField label="Év tól" value={yearFrom} onChange={(e) => setYearFrom(e.target.value)} sx={{ width: 100 }} />
-                    <TextField label="Év ig" value={yearTo} onChange={(e) => setYearTo(e.target.value)} sx={{ width: 100 }} />
+                <div className="filter-bar">
+
+                    <input
+                        className="filter-input"
+                        placeholder="Cím keresése"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
+
+                    <input
+                        className="filter-input"
+                        placeholder="Rendező"
+                        value={director}
+                        onChange={(e) => setDirector(e.target.value)}
+                    />
+
+                    <select
+                        className="filter-input"
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
+                    >
+                        <option value="">(Összes kategória)</option>
+                        {categories.map((c) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                    </select>
+
+                    <input
+                        className="filter-input"
+                        placeholder="Év tól"
+                        value={yearFrom}
+                        onChange={(e) => setYearFrom(e.target.value)}
+                    />
+
+                    <input
+                        className="filter-input"
+                        placeholder="Év ig"
+                        value={yearTo}
+                        onChange={(e) => setYearTo(e.target.value)}
+                    />
 
                     {isAdmin && (
-                        <Button variant="contained" startIcon={<AddIcon />} onClick={() => navigate("/movies/new")}>
-                            Új film
-                        </Button>
+                        <button
+                            className="neo-btn add"
+                            onClick={() => navigate("/movies/new")}
+                        >
+                            + Új Film
+                        </button>
                     )}
-                </Stack>
+
+                    {/* Oldal méret */}
+                    <select
+                        className="page-size-select"
+                        value={pageSize}
+                        onChange={(e) => { setPageSize(e.target.value); setPage(1); }}
+                    >
+                        <option value={6}>6 / oldal</option>
+                        <option value={12}>12 / oldal</option>
+                        <option value={20}>20 / oldal</option>
+                        <option value={50}>50 / oldal</option>
+                    </select>
+                </div>
             )}
 
-            {/* FILMEK LISTÁJA */}
-            <Grid container spacing={2}>
+            {/* ---------------- FILM LISTA ---------------- */}
+            <div className="movie-grid">
+
                 {movies.length === 0 && (
-                    <Typography variant="body1" sx={{ p: 2 }}>
-                        Nincs találat.
-                    </Typography>
+                    <div className="no-results">Nincs találat.</div>
                 )}
 
                 {movies.map((m) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={m.id}>
-                        <Card>
-                            <CardMedia
-                                component="img"
-                                height="220"
-                                image={m.posterUrl || "/react.svg"}
-                                alt={m.title}
-                            />
-                            <CardContent>
-                                <Typography variant="h6" noWrap>{m.title}</Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {m.director || "Ismeretlen rendező"}
-                                </Typography>
-                                <Typography variant="body2">
-                                    {m.releaseYear} • {m.genre || "N/A"}
-                                </Typography>
-                                <Typography variant="body2">
-                                    Értékelés: {m.rating ?? "N/A"}
-                                </Typography>
-                                {m.category && (
-                                    <Typography
-                                        variant="caption"
-                                        sx={{ display: "block", mt: 0.5, color: "gray" }}
-                                    >
-                                        {m.category.name}
-                                    </Typography>
-                                )}
-                            </CardContent>
+                    <div className="movie-card" key={m.id}>
+                        <img
+                            src={m.posterUrl || "/react.svg"}
+                            alt={m.title}
+                        />
 
-                            {isAdmin && (
-                                <CardActions>
-                                    <Button
-                                        size="small"
-                                        startIcon={<EditIcon />}
-                                        onClick={() => navigate(`/movies/${m.id}/edit`)}
-                                    >
-                                        Szerkesztés
-                                    </Button>
-                                    <Button
-                                        size="small"
-                                        color="error"
-                                        startIcon={<DeleteIcon />}
-                                        onClick={() => handleDelete(m.id)}
-                                    >
-                                        Törlés
-                                    </Button>
-                                </CardActions>
-                            )}
-                        </Card>
-                    </Grid>
+                        <div className="movie-title">{m.title}</div>
+
+                        <div className="movie-meta">
+                            {m.director || "Ismeretlen rendező"}
+                        </div>
+
+                        <div className="movie-meta">
+                            {m.releaseYear} • {m.genre || "N/A"}
+                        </div>
+
+                        <div className="movie-meta">
+                            Értékelés: {m.rating ?? "N/A"}
+                        </div>
+
+                        {m.category && (
+                            <div className="movie-meta" style={{ fontSize: "13px", opacity: 0.7 }}>
+                                {m.category.name}
+                            </div>
+                        )}
+
+                        {isAdmin && (
+                            <div className="movie-actions">
+
+                                <button
+                                    className="action-btn action-edit"
+                                    onClick={() => navigate(`/movies/${m.id}/edit`)}
+                                >
+                                    ✏️ Szerkesztés
+                                </button>
+
+                                <button
+                                    className="action-btn action-delete"
+                                    onClick={() => handleDelete(m.id)}
+                                >
+                                    🗑️ Törlés
+                                </button>
+
+                            </div>
+                        )}
+                    </div>
                 ))}
-            </Grid>
 
-            {/* LAPOZÁS */}
-            {!categoryFilterFromUrl && (
-                <Stack direction="row" justifyContent="center" sx={{ mt: 3 }}>
-                    <Pagination count={totalPages} page={page} onChange={(e, v) => setPage(v)} />
-                </Stack>
+            </div>
+
+            {/* ---------------- LAPOZÁS ---------------- */}
+            {!categoryFilterFromUrl && totalPages > 1 && (
+                <div className="neo-pagination">
+
+                    <button
+                        className="neo-page-btn"
+                        onClick={() => page > 1 && setPage(page - 1)}
+                    >
+                        ‹
+                    </button>
+
+                    <span className="neo-page-btn" style={{ cursor: "default" }}>
+                        {page} / {totalPages}
+                    </span>
+
+                    <button
+                        className="neo-page-btn"
+                        onClick={() => page < totalPages && setPage(page + 1)}
+                    >
+                        ›
+                    </button>
+
+                </div>
             )}
-        </Box>
+        </div>
     );
 }

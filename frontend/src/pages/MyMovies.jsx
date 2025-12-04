@@ -1,27 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/client";
-import {
-    Box,
-    Grid,
-    Card,
-    CardContent,
-    CardMedia,
-    CardActions,
-    Typography,
-    TextField,
-    Select,
-    MenuItem,
-    Button,
-    Stack,
-    InputLabel,
-    FormControl,
-    Pagination,
-} from "@mui/material";
-
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 
 export default function MyMovies() {
     const navigate = useNavigate();
@@ -40,12 +19,11 @@ export default function MyMovies() {
     const [pageSize] = useState(12);
     const [totalPages, setTotalPages] = useState(1);
 
-    const loaded = useRef(false); // megakadályozza a duplahívást
+    const loaded = useRef(false);
 
     // --- filmek betöltése ---
     const loadMovies = async () => {
         try {
-            // csak a kitöltött filterek kerüljenek az API query-be
             const params = {};
             if (search) params.search = search;
             if (director) params.director = director;
@@ -57,7 +35,6 @@ export default function MyMovies() {
 
             const res = await api.get("/user/movies", { params });
 
-            // backend lehet, hogy sima listát ad vissza, vagy paginál
             const data = Array.isArray(res.data)
                 ? res.data
                 : res.data.content || [];
@@ -69,7 +46,7 @@ export default function MyMovies() {
         }
     };
 
-    // --- kategóriák betöltése ---
+    // --- kategóriák ---
     const loadCategories = async () => {
         try {
             const res = await api.get("/categories");
@@ -79,7 +56,6 @@ export default function MyMovies() {
         }
     };
 
-    // csak egyszer fusson le
     useEffect(() => {
         if (loaded.current) return;
         loaded.current = true;
@@ -87,7 +63,6 @@ export default function MyMovies() {
         loadMovies();
     }, []);
 
-    // ha bármely filter vagy oldalváltás történik, újratölt
     useEffect(() => {
         loadMovies();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -105,126 +80,131 @@ export default function MyMovies() {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
-            {/* ---------------------------------------
-          SZŰRŐK + ÚJ FILM GOMB
-      ---------------------------------------- */}
-            <Stack
-                direction="row"
-                spacing={2}
-                sx={{ mb: 3, flexWrap: "wrap" }}
-                alignItems="center"
-            >
-                <TextField
-                    label="Cím keresése"
+        <div className="page page-movie-list">
+
+            {/* ---------------- SZŰRŐK ---------------- */}
+            <div className="filter-bar">
+
+                <input
+                    className="filter-input"
+                    placeholder="Cím keresése"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
 
-                <TextField
-                    label="Rendező"
+                <input
+                    className="filter-input"
+                    placeholder="Rendező"
                     value={director}
                     onChange={(e) => setDirector(e.target.value)}
                 />
 
-                <FormControl sx={{ minWidth: 160 }}>
-                    <InputLabel>Kategória</InputLabel>
-                    <Select
-                        value={category}
-                        label="Kategória"
-                        onChange={(e) => setCategory(e.target.value)}
-                    >
-                        <MenuItem value="">(mind)</MenuItem>
-                        {categories.map((c) => (
-                            <MenuItem key={c.id} value={c.name}>
-                                {c.name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                <select
+                    className="filter-input"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                >
+                    <option value="">(mind)</option>
+                    {categories.map((c) => (
+                        <option key={c.id} value={c.name}>{c.name}</option>
+                    ))}
+                </select>
 
-                <TextField
-                    label="Év tól"
+                <input
+                    className="filter-input"
+                    placeholder="Év tól"
                     value={yearFrom}
                     onChange={(e) => setYearFrom(e.target.value)}
-                    sx={{ width: 100 }}
                 />
-                <TextField
-                    label="Év ig"
+
+                <input
+                    className="filter-input"
+                    placeholder="Év ig"
                     value={yearTo}
                     onChange={(e) => setYearTo(e.target.value)}
-                    sx={{ width: 100 }}
                 />
 
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
+                <button
+                    className="neo-btn add"
                     onClick={() => navigate("/my-movies/new")}
                 >
-                    Új film
-                </Button>
-            </Stack>
+                    + Új Film
+                </button>
 
-            {/* ---------------------------------------
-          FILM KÁRTYÁK
-      ---------------------------------------- */}
-            <Grid container spacing={2}>
+            </div>
+
+            {/* ---------------- FILM LISTA ---------------- */}
+            <div className="movie-grid">
+
                 {movies.length === 0 && (
-                    <Typography variant="body1" sx={{ p: 2 }}>
-                        Nincs találat.
-                    </Typography>
+                    <div className="no-results">Nincs találat.</div>
                 )}
 
                 {movies.map((m) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={m.id}>
-                        <Card>
-                            <CardMedia
-                                component="img"
-                                height="220"
-                                image={m.posterUrl || "/react.svg"}
-                                alt={m.title}
-                            />
-                            <CardContent>
-                                <Typography variant="h6">{m.title}</Typography>
-                                <Typography variant="body2">{m.director}</Typography>
-                                <Typography variant="body2">
-                                    {m.releaseYear} • {m.genre}
-                                </Typography>
-                                <Typography variant="body2">
-                                    Értékelés: {m.rating ?? "N/A"}
-                                </Typography>
-                            </CardContent>
+                    <div className="movie-card" key={m.id}>
+                        <img
+                            src={m.posterUrl || "/react.svg"}
+                            alt={m.title}
+                        />
 
-                            <CardActions>
-                                <Button
-                                    size="small"
-                                    startIcon={<EditIcon />}
-                                    onClick={() => navigate(`/my-movies/${m.id}/edit`)}
-                                >
-                                    Szerkesztés
-                                </Button>
-                                <Button
-                                    size="small"
-                                    color="error"
-                                    startIcon={<DeleteIcon />}
-                                    onClick={() => handleDelete(m.id)}
-                                >
-                                    Törlés
-                                </Button>
-                            </CardActions>
-                        </Card>
-                    </Grid>
+                        <div className="movie-title">{m.title}</div>
+
+                        <div className="movie-meta">{m.director || "Ismeretlen rendező"}</div>
+
+                        <div className="movie-meta">
+                            {m.releaseYear} • {m.genre}
+                        </div>
+
+                        <div className="movie-meta">
+                            Értékelés: {m.rating ?? "N/A"}
+                        </div>
+
+                        {m.category && (
+                            <div className="movie-meta" style={{ opacity: 0.7 }}>
+                                {m.category.name}
+                            </div>
+                        )}
+
+                        <div className="movie-actions">
+                            <button
+                                className="action-btn action-edit"
+                                onClick={() => navigate(`/movies/${m.id}/edit`)}
+                            >
+                                ✏️ Szerkesztés
+                            </button>
+
+                            <button
+                                className="action-btn action-delete"
+                                onClick={() => handleDelete(m.id)}
+                            >
+                                🗑️ Törlés
+                            </button>
+                        </div>
+                    </div>
                 ))}
-            </Grid>
 
-            {/* LAPOZÁS */}
-            <Stack direction="row" justifyContent="center" sx={{ mt: 3 }}>
-                <Pagination
-                    count={totalPages}
-                    page={page}
-                    onChange={(e, v) => setPage(v)}
-                />
-            </Stack>
-        </Box>
+            </div>
+
+            {/* ---------------- LAPOZÁS ---------------- */}
+            <div className="neo-pagination">
+                <button
+                    className="neo-page-btn"
+                    onClick={() => page > 1 && setPage(page - 1)}
+                >
+                    ‹
+                </button>
+
+                <span className="neo-page-btn" style={{ cursor: "default" }}>
+                    {page} / {totalPages}
+                </span>
+
+                <button
+                    className="neo-page-btn"
+                    onClick={() => page < totalPages && setPage(page + 1)}
+                >
+                    ›
+                </button>
+            </div>
+        </div>
     );
 }
