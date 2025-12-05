@@ -1,4 +1,4 @@
-import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useNavigate, Link as RouterLink, useLocation } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,6 +10,7 @@ import { auth } from "../api/client";
 
 export default function Navbar() {
     const navigate = useNavigate();
+    const location = useLocation();
     const user = auth.getUser();
     const loggedIn = !!user;
     const isAdmin = user?.role === "ADMIN";
@@ -19,39 +20,49 @@ export default function Navbar() {
         navigate("/login");
     };
 
+    const linkClass = (path) =>
+        "nav-link" + (location.pathname === path ? " active" : "");
+
     return (
-        <AppBar position="sticky" elevation={1}>
-            <Toolbar sx={{ gap: 2 }}>
-                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+        <AppBar position="sticky" elevation={0} className="neo-navbar">
+            <Toolbar className="nav-toolbar">
+
+                <Typography variant="h6" className="nav-title">
                     Filmajánló
                 </Typography>
 
-                <Stack direction="row" spacing={3}>
-                    <Link component={RouterLink} to="/" color="inherit">Filmek</Link>
-                    <Link component={RouterLink} to="/categories" color="inherit">Kategóriák</Link>
+                <Stack direction="row" spacing={3} className="nav-links">
+                    <Link component={RouterLink} to="/" className={linkClass("/")}>
+                        Movies
+                    </Link>
+
+                    <Link component={RouterLink} to="/categories" className={linkClass("/categories")}>
+                        Categories
+                    </Link>
 
                     {loggedIn && !isAdmin && (
-                        <Link component={RouterLink} to="/my-movies" color="inherit">
-                            Saját lista
+                        <Link component={RouterLink} to="/my-movies" className={linkClass("/my-movies")}>
+                            My List
                         </Link>
                     )}
 
                     {isAdmin && (
-                        <Link component={RouterLink} to="/admin/users" color="inherit">
+                        <Link component={RouterLink} to="/admin/users" className={linkClass("/admin/users")}>
                             Felhasználók
                         </Link>
                     )}
                 </Stack>
 
                 {loggedIn ? (
-                    <Button color="inherit" onClick={logout}>
-                        Kijelentkezés ({user.username})
-                    </Button>
+                    <button className="nav-btn logout" onClick={logout}>
+                        Logout ({user.username})
+                    </button>
                 ) : (
-                    <Button color="inherit" component={RouterLink} to="/login">
-                        Bejelentkezés
-                    </Button>
+                    <button className="nav-btn" onClick={() => navigate("/login")}>
+                        Login
+                    </button>
                 )}
+
             </Toolbar>
         </AppBar>
     );

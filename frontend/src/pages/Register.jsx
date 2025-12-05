@@ -36,11 +36,11 @@ export default function Register() {
     };
 
     return (
-        <div className="page auth-page">
+        <div className="register-page">
             <div className="neo-card auth-card">
                 <div className="neo-card-inner">
 
-                    <h2 className="auth-title">🆕 Regisztráció</h2>
+                    <h2 className="auth-title">🆕 Registration</h2>
 
                     {error && <div className="auth-error">{error}</div>}
                     {success && <div className="auth-success">{success}</div>}
@@ -48,25 +48,25 @@ export default function Register() {
                     <form onSubmit={submit} className="auth-form">
                         <input
                             className="neo-input"
-                            placeholder="Felhasználónév"
+                            placeholder="Username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                         />
 
                         <input
                             className="neo-input"
-                            type="password"
-                            placeholder="Jelszó"
+                            type="Password"
+                            placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
 
                         <button type="submit" className="neo-btn save">
-                            Regisztráció
+                            Registration
                         </button>
 
                         <button type="button" className="neo-btn cancel" onClick={() => navigate("/login")}>
-                            Már van fiókom
+                            I already had an account
                         </button>
                     </form>
 

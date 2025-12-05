@@ -6,7 +6,7 @@ export default function NotFound() {
         <Container sx={{ py: 6, textAlign: "center" }}>
             <Stack spacing={2} alignItems="center">
                 <Typography variant="h3">404</Typography>
-                <Typography variant="h6" color="text.secondary">Az oldal nem található</Typography>
+                <Typography variant="h6" color="text.secondary">This page is not found.</Typography>
                 <Button variant="contained" component={RouterLink} to="/">Vissza a főoldalra</Button>
             </Stack>
         </Container>

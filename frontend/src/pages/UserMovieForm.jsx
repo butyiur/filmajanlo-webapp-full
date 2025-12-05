@@ -85,7 +85,7 @@ export default function UserMovieForm() {
             localStorage.removeItem("userMovieDraft");
             navigate("/my-movies");
         } catch (err) {
-            console.error("❌ Mentés sikertelen:", err);
+            console.error("❌ Error while saving:", err);
         }
     };
 
@@ -96,13 +96,13 @@ export default function UserMovieForm() {
             <div className="form-card">
 
                 <h2 className="form-title">
-                    {id ? "Saját film szerkesztése" : "Új saját film hozzáadása"}
+                    {id ? "Editing own movie" : "Adding to own list"}
                 </h2>
 
                 <form onSubmit={submit}>
                     <input
                         className="form-input"
-                        placeholder="Cím *"
+                        placeholder="Title *"
                         required
                         value={form.title}
                         onChange={(e) => change("title", e.target.value)}
@@ -110,7 +110,7 @@ export default function UserMovieForm() {
 
                     <input
                         className="form-input"
-                        placeholder="Rendező"
+                        placeholder="Director"
                         value={form.director}
                         onChange={(e) => change("director", e.target.value)}
                     />
@@ -118,7 +118,7 @@ export default function UserMovieForm() {
                     <div className="form-row">
                         <input
                             className="form-input"
-                            placeholder="Megjelenés éve"
+                            placeholder="Release year"
                             type="number"
                             value={form.releaseYear}
                             onChange={(e) => change("releaseYear", e.target.value)}
@@ -126,7 +126,7 @@ export default function UserMovieForm() {
 
                         <input
                             className="form-input"
-                            placeholder="Értékelés (1–10)"
+                            placeholder="Rating (1–10)"
                             type="number"
                             min="0"
                             max="10"
@@ -138,7 +138,7 @@ export default function UserMovieForm() {
 
                     <textarea
                         className="form-input"
-                        placeholder="Leírás"
+                        placeholder="Description"
                         rows="4"
                         value={form.description}
                         onChange={(e) => change("description", e.target.value)}
@@ -146,7 +146,7 @@ export default function UserMovieForm() {
 
                     <input
                         className="form-input"
-                        placeholder="Plakát URL"
+                        placeholder="Poster URL"
                         value={form.posterUrl}
                         onChange={(e) => change("posterUrl", e.target.value)}
                     />
@@ -155,7 +155,7 @@ export default function UserMovieForm() {
                         <img
                             src={form.posterUrl}
                             className="form-preview"
-                            alt="Előnézet"
+                            alt="Preview"
                             onError={(e) => (e.currentTarget.style.display = "none")}
                         />
                     )}
@@ -179,14 +179,14 @@ export default function UserMovieForm() {
                             className="action-btn action-delete form-action"
                             onClick={() => navigate("/my-movies")}
                         >
-                            🗑️ Mégse
+                            🗑️ Back
                         </button>
 
                         <button
                             type="submit"
                             className="action-btn action-edit form-action"
                         >
-                            ✏️ Mentés
+                            ✏️ Save
                         </button>
                     </div>
                 </form>

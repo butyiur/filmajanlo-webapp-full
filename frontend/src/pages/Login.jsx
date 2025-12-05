@@ -38,14 +38,14 @@ export default function Login() {
             <div className="neo-card auth-card">
                 <div className="neo-card-inner">
 
-                    <h2 className="auth-title">🔐 Bejelentkezés</h2>
+                    <h2 className="auth-title">🔐 Login</h2>
 
                     {error && <div className="auth-error">{error}</div>}
 
                     <form onSubmit={submit} className="auth-form">
                         <input
                             className="neo-input"
-                            placeholder="Felhasználónév"
+                            placeholder="Username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                         />
@@ -53,19 +53,19 @@ export default function Login() {
                         <input
                             className="neo-input"
                             type="password"
-                            placeholder="Jelszó"
+                            placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
 
                         <button type="submit" className="neo-btn save">
-                            Bejelentkezés
+                            Login
                         </button>
                     </form>
 
                     <div className="auth-link-row">
-                        <span>Nincs még fiókod?</span>
-                        <Link to="/register" className="auth-link">Regisztráció</Link>
+                        <span>Do not have account?</span>
+                        <Link to="/register" className="auth-link">Registration</Link>
                     </div>
 
                 </div>
