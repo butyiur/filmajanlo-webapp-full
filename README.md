@@ -67,17 +67,23 @@ Modern button & card components
 
 ## 🛠 Setup Instructions (for local run)
 git clone https://github.com/butyiur/filmAjanlo-webapp.git
+
 cd filmAjanlo-webapp
 
 ### Backend
 cd backend
+
 mvn spring-boot:run
+
 Backend will start on: http://localhost:8080
 
 ### Frontend
 cd frontend
+
 npm install
+
 npm run dev
+
 Frontend will start on: http://localhost:5173
 
 
