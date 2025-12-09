@@ -211,7 +211,7 @@ export default function MovieList() {
                                     className="action-btn action-delete"
                                     onClick={() => handleDelete(m.id)}
                                 >
-                                    🗑️ Deletef
+                                    🗑️ Delete
                                 </button>
 
                             </div>

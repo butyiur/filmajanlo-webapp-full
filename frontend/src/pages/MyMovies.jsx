@@ -168,8 +168,7 @@ export default function MyMovies() {
                         <div className="movie-actions">
                             <button
                                 className="action-btn action-edit"
-                                onClick={() => navigate(`/movies/${m.id}/edit`)}
-                            >
+                                onClick={() => navigate(`/my-movies/${m.id}/edit`)}                            >
                                 ✏️ Edit
                             </button>
 

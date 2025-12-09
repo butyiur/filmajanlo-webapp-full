@@ -1,2 +1,6 @@
 TODO:
-regisztráció bevezetése
+ANGOLRA írás
+
+own listbe ha szerkesztésre megyünk nem jó helyre visz át
+
+

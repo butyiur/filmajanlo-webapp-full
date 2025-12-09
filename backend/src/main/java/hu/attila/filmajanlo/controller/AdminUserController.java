@@ -54,8 +54,9 @@ public class AdminUserController {
         String currentUsername = auth != null ? auth.getName() : null;
 
         if (currentUsername != null && currentUsername.equals(target.getUsername())) {
-            return ResponseEntity.badRequest().body("Saját fiókot nem törölhetsz.");
+            return ResponseEntity.badRequest().body("You cannot delete your own account.");
         }
+
 
         // töröljük a user saját listáját
         userMovieRepository.deleteByOwnerId(id);

@@ -96,7 +96,7 @@ export default function UserMovieForm() {
             <div className="form-card">
 
                 <h2 className="form-title">
-                    {id ? "Editing own movie" : "Adding to own list"}
+                    {id ? "Edit own movie" : "Adding to own list"}
                 </h2>
 
                 <form onSubmit={submit}>
