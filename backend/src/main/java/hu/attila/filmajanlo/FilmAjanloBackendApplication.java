@@ -15,9 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime; 
 
 @SpringBootApplication
-@EntityScan(basePackages = "hu.attila.filmajanlo.model")
-@EnableJpaRepositories(basePackages = "hu.attila.filmajanlo.repository")
-@ComponentScan(basePackages = "hu.attila.filmajanlo")
 public class FilmAjanloBackendApplication {
 
 	public static void main(String[] args) {
